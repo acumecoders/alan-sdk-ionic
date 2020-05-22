@@ -556,6 +556,9 @@ intent(`what is the total (price|amount) (of the order|for my order|)`,
     `how much is my order`, p => {
     if (p.visual.total && p.visual.total > 0) {
         p.play(`The total amount for your order is: `);
+        if (p.visual.route === '/cart') {
+            p.play({command: 'highlight', id: 'total'});
+        }
         p.play(`${p.visual.total} dollars`);
     } else {
         p.play(`Your cart is empty, please make an order first`)
