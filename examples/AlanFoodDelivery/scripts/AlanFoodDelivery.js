@@ -82,7 +82,15 @@ const DISHES_INTENT = dishes.join('|');
 const CATEGORY_LIST = Object.keys(CATEGORY_ALIASES).join("|");
 
 intent(`(back|go back)`, p => {
-    p.play({command: 'navigation', action: 'back'});
+    let route = p.visual.route ? p.visual.route.toLowerCase() : null;
+    switch (route) {
+        case "/finish-order":
+        case "/cleared-order":
+            p.play({command: 'navigation', route: '/menu'});
+            break;
+        default:
+            p.play({command: 'navigation', action: 'back'});
+    }
     p.play(`OK`);
 });
 
@@ -95,7 +103,7 @@ intent("What (kind|types) of food do you have (to order|)", "What do you have (t
 
 intent(`what (can|should|must) I (do|say|pronounce)`, `help (me|)`, `what to do (here|)`, `how to start`,
     p => {
-        const route = p.visual.route ? p.visual.route.toLowerCase() : null;
+        let route = p.visual.route ? p.visual.route.toLowerCase() : null;
         switch (route) {
             case "/menu/pizza":
             case "/menu/street food":
@@ -117,10 +125,10 @@ intent(`what (can|should|must) I (do|say|pronounce)`, `help (me|)`, `what to do 
                 p.play("Here you can point the address for delivering your order", "Please, enter or say what is the delivery address?");
                 break;
             case "finish-order":
-                p.play("You finished your order, if you want to make another order say 'open menu' and add new items to your order");
+                p.play("You finished your order, if you want to make another order say 'go back' or 'open menu' and add new items to your order");
                 break;
             case "cleared-order":
-                p.play("You have (cleared|canceled) your order, if you want to make another order say 'open menu' and add new items to your order");
+                p.play("You have (cleared|canceled) your order, if you want to make another order say 'go back' or 'open menu' and add new items to your order");
                 break;
 
             default:
