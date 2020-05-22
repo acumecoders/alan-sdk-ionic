@@ -118,16 +118,18 @@ intent(`what (can|should|must) I (do|say|pronounce)`, `help (me|)`, `what to do 
                 p.play("You are in your cart. You should answer questions about delivery address and time. " +
                     "You can change the address by saying 'set address' and you can change delivery time when you say 'set time'");
                 break;
+            //TODO: Not returned in VS route
             case "time":
                 p.play("Enter or say what time we should deliver an order to you");
                 break;
+            //TODO: Not returned in VS route
             case "address":
                 p.play("Here you can point the address for delivering your order", "Please, enter or say what is the delivery address?");
                 break;
-            case "finish-order":
+            case "/finish-order":
                 p.play("You finished your order, if you want to make another order say 'go back' or 'open menu' and add new items to your order");
                 break;
-            case "cleared-order":
+            case "/cleared-order":
                 p.play("You have (cleared|canceled) your order, if you want to make another order say 'go back' or 'open menu' and add new items to your order");
                 break;
 
