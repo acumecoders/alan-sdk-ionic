@@ -552,6 +552,16 @@ intent(`finish (order|)`, p => {
     }
 });
 
+intent(`what is the total (price|amount) (of the order|for my order|)`,
+    `how much is my order`, p => {
+    if (p.visual.total && p.visual.total > 0) {
+        p.play(`The total amount for your order is: `);
+        p.play(`${p.visual.total} dollars`);
+    } else {
+        p.play(`Your cart is empty, please make an order first`)
+    }
+});
+
 intent(`(how much|what) does $(ITEM ${ITEMS_INTENT}) cost`, `How much is $(ITEM ${ITEMS_INTENT})`, p => {
     let order = p.visual.order || {};
     let price = ITEM_ALIASES[p.ITEM.value.toLowerCase()].price;
