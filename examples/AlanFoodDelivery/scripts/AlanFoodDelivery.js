@@ -189,7 +189,7 @@ intent(`(clear|remove|empty|cancel) order`, p => {
 
 let confirm = context(() => {
     follow('(yes|ok|correct|procede|confirm|continue|next|go on)', p => {
-        p.play(`Great,|) your order has been confirmed. and will be delivered`);
+        p.play(`(Great,|) your order has been confirmed. and will be delivered`);
         if (p.visual.address) {
             p.play({command: 'highlight', id: 'address'});
             p.play(`to ${p.visual.address}`);
