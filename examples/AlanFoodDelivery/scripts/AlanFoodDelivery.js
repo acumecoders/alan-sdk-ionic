@@ -296,7 +296,7 @@ let date = context(() => {
                 p.play({command: 'highlight', id: 'date'});
             }
             if (p.TIME) {
-                time = p.TIME;
+                time = p.TIME.value;
                 date = date ? date : p.visual.date;
                 p.play({command: 'highlight', id: 'time'});
             }
@@ -444,7 +444,7 @@ intent(`(remove|delete|exclude) $(ITEM ${ITEMS_INTENT})`,
             let deteleQnty = p.NUMBER ? p.NUMBER.number : quantity;
 
             if (quantity - deteleQnty <= 0) {
-                p.play('Removed all ' + p.ITEM);
+                p.play('Removed all ' + p.ITEM.value);
             } else {
                 p.play(`Updated ${p.ITEM} quantity to ${quantity - deteleQnty}`);
             }
@@ -480,11 +480,19 @@ intent(`(set|change|replace) (delivery|) address`, `(delivery|) address is (not 
         }
     });
 
-intent(`Deliver to $(LOC)`, `Deliver to $(LOC) (at|on|) $(DATE)`,
+const COMPOUND_DELIVERY_INTENT = [
+    `Deliver to $(LOC)`,
+    `Delivery address (is|) $(LOC)`,
+    `Deliver to $(LOC) (at|on|) $(DATE)`,
     `Deliver to $(LOC) (at|on|) $(DATE) (at|on|) $(TIME)`,
     `Deliver (at|on|) $(DATE)`,
+    `Delivery date (is|) $(DATE)`,
     `Deliver (at|on|) $(TIME)`,
-    `Deliver (at|on|) $(DATE) (at|on|) $(TIME)`, p => {
+    `Delivery time (is|) $(TIME)`,
+    `Deliver (at|on|) $(DATE) (at|on|) $(TIME)`
+]
+
+intent(COMPOUND_DELIVERY_INTENT, p => {
 
         if (_.isEmpty(p.visual.order) || !p.visual.total) {
             p.play("Your cart is empty, please make an order first");
@@ -501,8 +509,8 @@ intent(`Deliver to $(LOC)`, `Deliver to $(LOC) (at|on|) $(DATE)`,
             address = p.LOC.value;
         }
         if (p.DATE || p.TIME) {
-            date = p.DATE;
-            time = p.TIME;
+            date = p.DATE ? p.DATE.moment.format("MMMM Do") : null;
+            time = p.TIME ? p.TIME.value : null;
             p.play({command: "time", time: time, date: date});
         }
         if (playDelivery(p, address, date, time)) {
