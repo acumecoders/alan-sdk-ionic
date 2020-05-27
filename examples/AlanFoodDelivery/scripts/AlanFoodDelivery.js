@@ -530,6 +530,64 @@ intent(COMPOUND_DELIVERY_INTENT, p => {
         }
     });
 
+
+// set item, address, date/time
+const COMPOUND_ITEM_DELIVERY_INTENT = [
+    `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC)`,
+    `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME)`,
+    `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME) $(DATE)`,
+    `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(DATE) $(TIME)`,
+    `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(DATE) $(TIME)`
+] 
+
+intent( COMPOUND_ITEM_DELIVERY_INTENT, p => {
+    p.play(`Delivery address is set to ${p.LOC}`);
+    addItems(p, p.ITEMs, 0);
+    let route = p.visual.route ? p.visual.route.toLowerCase() : null;
+    let address = p.visual.address;
+    let date = p.visual.date;
+    let time = p.visual.time;
+
+    switch (route) {
+        case "/cart":
+            p.play({command: "checkout"});
+
+            if (p.LOC) {
+                p.play({command: "address", address: p.LOC.value});
+                address = p.LOC.value;
+            }
+            if (p.DATE || p.TIME) {
+                date = p.DATE ? p.DATE.moment.format("MMMM Do") : null;
+                time = p.TIME ? p.TIME.value : null;
+                p.play({command: "time", time: time, date: date});
+            }
+            if (playDelivery(p, address, date, time)) {
+                p.then(checkout);
+            }
+            break;
+        default:
+            if (p.LOC) {
+                address = p.LOC.value;
+                p.play({command: "address", address: address});
+                p.play({command: `highlight`, id: `address`});
+                p.play(`Delivery address is set to ${p.LOC}`);
+            }
+            if (p.DATE) {
+                date = p.DATE ? p.DATE.value : null;
+                p.play({command: "time", time: time, date: date});
+                p.play({command: `highlight`, id: `date`});
+                p.play(`Delivery date is ${p.DATE} `);
+            }
+            if (p.TIME) {
+                time = p.TIME ? p.TIME.value : null;
+                p.play({command: "time", time: time, date: date});
+                p.play({command: `highlight`, id: `time`});
+                p.play(`Delivery time is ${p.TIME} `);
+            }
+            p.play({command: "checkout"});
+    }
+});
+
 // checkout
 intent(`that's (all|it)`, '(ready to|) checkout', p => {
     if (_.isEmpty(p.visual.order) || !p.visual.total) {
