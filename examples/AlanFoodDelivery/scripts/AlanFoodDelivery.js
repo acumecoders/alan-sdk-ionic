@@ -208,7 +208,7 @@ let confirm = context(() => {
             p.play({command: 'highlight', id: 'date'});
             p.play(`on ${p.visual.date}`);
         }
-        if (p.visual.address) {
+        if (p.visual.time) {
             p.play({command: 'highlight', id: 'time'});
             p.play(`at ${p.visual.time}`);
         }
@@ -249,6 +249,8 @@ let checkout = context(() => {
 
         let date = api.moment().tz(p.timeZone).format("MMMM Do");
         let time = api.moment().tz(p.timeZone).add(30, 'minutes').format("h:mm a");
+        date = date ? date : p.visual.date;
+        time = time ? time : p.visual.time;
         p.play({command: "time", time: time, date: date});
         playDelivery(p, p.LOC.value, date, time);
     });
@@ -263,7 +265,7 @@ let checkout = context(() => {
                 p.play({command: 'highlight', id: 'date'});
             }
             if (p.TIME) {
-                time = p.TIME;
+                time = p.TIME.value;
                 date = date ? date : p.visual.date;
                 p.play({command: 'highlight', id: 'time'});
             }
@@ -469,17 +471,7 @@ intent(`(my order|order details|details)`, p => {
 });
 
 // set address
-intent(`(set|change|replace) (delivery|) address`, `(delivery|) address is (not correct|invalid)`,
-    p => {
-        if (_.isEmpty(p.visual.order)) {
-            p.play("Please, add something to your order first");
-        } else {
-            p.play({command: 'highlight', id: 'address'});
-            p.play('What is delivery address?');
-            p.then(checkout);
-        }
-    });
-
+// set date/time
 const COMPOUND_DELIVERY_INTENT = [
     `Deliver to $(LOC)`,
     `Delivery address (is|) $(LOC)`,
@@ -494,39 +486,47 @@ const COMPOUND_DELIVERY_INTENT = [
 
 intent(COMPOUND_DELIVERY_INTENT, p => {
 
-        if (_.isEmpty(p.visual.order) || !p.visual.total) {
-            p.play("Your cart is empty, please make an order first");
-            return;
-        }
         let address = p.visual.address;
         let date = p.visual.date;
         let time = p.visual.time;
+        let route = p.visual.route ? p.visual.route.toLowerCase() : null;
 
-        p.play({command: "checkout"});
+        switch (route) {
+            case "/cart":
+                p.play({command: "checkout"});
 
-        if (p.LOC) {
-            p.play({command: "address", address: p.LOC.value});
-            address = p.LOC.value;
-        }
-        if (p.DATE || p.TIME) {
-            date = p.DATE ? p.DATE.moment.format("MMMM Do") : null;
-            time = p.TIME ? p.TIME.value : null;
-            p.play({command: "time", time: time, date: date});
-        }
-        if (playDelivery(p, address, date, time)) {
-            p.then(checkout);
-        }
-    });
-
-// set date/time
-intent(`(Let's|) (set|choose|select|change) (delivery|) (time|date)`, `(delivery|) (date|time) is (not correct|invalid)`,
-    p => {
-        if (_.isEmpty(p.visual.order)) {
-            p.play("Please, add something to your order first");
-        } else {
-            p.play({command: 'highlight', id: 'time'});
-            p.play("What is delivery time?");
-            p.then(date);
+                if (p.LOC) {
+                    p.play({command: "address", address: p.LOC.value});
+                    address = p.LOC.value;
+                }
+                if (p.DATE || p.TIME) {
+                    date = p.DATE ? p.DATE.moment.format("MMMM Do") : null;
+                    time = p.TIME ? p.TIME.value : null;
+                    p.play({command: "time", time: time, date: date});
+                }
+                if (playDelivery(p, address, date, time)) {
+                    p.then(checkout);
+                }
+                break;
+            default:
+                if (p.LOC) {
+                    address = p.LOC.value;
+                    p.play({command: "address", address: address});
+                    p.play({command: `highlight`, id: `address`});
+                    p.play(`Delivery address is set to ${p.LOC}`);
+                }
+                if (p.DATE) {
+                    date = p.DATE ? p.DATE.value : null;
+                    p.play({command: "time", time: time, date: date});
+                    p.play({command: `highlight`, id: `date`});
+                    p.play(`Delivery date is ${p.DATE} `);
+                }
+                if (p.TIME) {
+                    time = p.TIME ? p.TIME.value : null;
+                    p.play({command: "time", time: time, date: date});
+                    p.play({command: `highlight`, id: `time`});
+                    p.play(`Delivery time is ${p.TIME} `);
+                }
         }
     });
 
