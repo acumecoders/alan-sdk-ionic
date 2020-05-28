@@ -540,7 +540,52 @@ const COMPOUND_ITEM_DELIVERY_INTENT = [
     `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(DATE) $(TIME)`
 ] 
 
-intent( COMPOUND_ITEM_DELIVERY_INTENT, p => {
+intent( `$(ITEM ${ITEMS_INTENT})`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(ITEM ${ITEMS_INTENT}) (and|) $(LOC)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) (and|) $(LOC)`,
+       `$(LOC) $(ITEM ${ITEMS_INTENT})`,
+       `$(LOC) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME)`,
+       `$(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME) $(DATE)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME) $(DATE)`,
+       `$(ITEM ${ITEMS_INTENT}) $(TIME) $(DATE) $(LOC) `,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(TIME) $(DATE) $(LOC) `,
+       `$(ITEM ${ITEMS_INTENT}) $(TIME) $(DATE)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(TIME) $(DATE)`,
+       `$(ITEM ${ITEMS_INTENT}) $(DATE) $(TIME)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(DATE) $(TIME)`,
+       `$(TIME) $(ITEM ${ITEMS_INTENT}) $(DATE)`,
+       `$(TIME) $(NUMBER) $(ITEM ${ITEMS_INTENT}) $(DATE)`,
+       `$(DATE) $(ITEM ${ITEMS_INTENT}) $(TIME)`,
+       `$(DATE) $(NUMBER) $(ITEM ${ITEMS_INTENT}) $(TIME)`,
+       `$(TIME) $(DATE) $(ITEM ${ITEMS_INTENT})`,
+       `$(TIME) $(DATE) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(DATE) $(TIME) $(ITEM ${ITEMS_INTENT})`,
+       `$(DATE) $(TIME)$(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       
+       `$(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME) $(DATE)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(TIME) $(DATE)`,
+       `$(ITEM ${ITEMS_INTENT}) $(LOC) $(DATE) $(TIME)`,
+       `$(NUMBER) $(ITEM ${ITEMS_INTENT}) $(LOC) $(DATE) $(TIME)`,
+       `$(LOC) $(ITEM ${ITEMS_INTENT}) $(TIME) $(DATE)`,
+       `$(LOC) $(NUMBER) $(ITEM ${ITEMS_INTENT}) $(TIME) $(DATE)`,
+       `$(LOC) $(ITEM ${ITEMS_INTENT}) $(DATE) $(TIME)`,
+       `$(LOC) $(NUMBER) $(ITEM ${ITEMS_INTENT}) $(DATE) $(TIME)`,
+       `$(LOC) $(TIME) $(DATE) $(ITEM ${ITEMS_INTENT})`,
+       `$(LOC) $(TIME) $(DATE) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(LOC) $(DATE) $(TIME) $(ITEM ${ITEMS_INTENT})`,
+       `$(LOC) $(DATE) $(TIME) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(TIME) $(LOC) $(DATE) $(ITEM ${ITEMS_INTENT})`,
+       `$(TIME) $(LOC) $(DATE) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(DATE) $(LOC) $(TIME) $(ITEM ${ITEMS_INTENT})`,
+       `$(DATE) $(LOC) $(TIME) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(TIME) $(DATE) $(LOC) $(ITEM ${ITEMS_INTENT})`,
+       `$(TIME) $(DATE) $(LOC) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+       `$(DATE) $(TIME) $(LOC) $(ITEM ${ITEMS_INTENT})`,
+       `$(DATE) $(TIME) $(LOC) $(NUMBER) $(ITEM ${ITEMS_INTENT})`,
+        p => {
     p.play(`Delivery address is set to ${p.LOC}`);
     addItems(p, p.ITEMs, 0);
     let route = p.visual.route ? p.visual.route.toLowerCase() : null;
